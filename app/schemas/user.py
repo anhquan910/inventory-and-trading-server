@@ -7,7 +7,6 @@ class UserBase(BaseModel):
     full_name: str | None = None
 
 class UserCreate(UserBase):
-    email: EmailStr
     password: str
 
 class User(UserBase):
