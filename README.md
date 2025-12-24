@@ -9,6 +9,11 @@ cd jewellery-dashboard
 
 ## Setup
 
+Make sure that your computer have:
+
+- Python
+- Docker and Docker Compose (can be installed with Rancher Desktop)
+
 ```bash
 docker-compose up -d
 
