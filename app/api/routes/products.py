@@ -8,7 +8,7 @@ from app.models.user import User
 from app.schemas.product import ProductCreate, ProductResponse, ProductUpdate
 from app.models.production import ProductMaterial
 from app.models.inventory import Material
-from app.schemas.production import ComponentCreate, ComponentResponse
+from app.schemas.production import ComponentCreate, ComponentResponse, ProductionRun
 
 router = APIRouter()
 
@@ -130,3 +130,40 @@ def remove_component_from_recipe(
     db.commit()
     
     return {"status": "deleted"}
+
+
+@router.post("/{product_id}/produce")
+def record_production_run(
+    product_id: int,
+    production: ProductionRun,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    recipe_items = db.query(ProductMaterial).filter(
+        ProductMaterial.product_id == product_id
+    ).all()
+
+    if not recipe_items:
+        raise HTTPException(status_code=400, detail="This product has no recipe defined. Cannot calculate material usage.")
+
+    for item in recipe_items:
+        required_qty = item.quantity_used * production.quantity
+        if item.material.current_stock < required_qty:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Insufficient stock for {item.material.name}. Required: {required_qty}, Available: {item.material.current_stock}"
+            )
+
+    for item in recipe_items:
+        total_deduction = item.quantity_used * production.quantity
+        item.material.current_stock -= total_deduction
+
+    product.stock_quantity += production.quantity
+
+    db.commit()
+    
+    return {"status": "success", "new_stock_quantity": product.stock_quantity}

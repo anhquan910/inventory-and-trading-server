@@ -12,3 +12,6 @@ class ComponentResponse(BaseModel):
 
     class Config:
         from_attributes = True
+  
+class ProductionRun(BaseModel):
+    quantity: int
