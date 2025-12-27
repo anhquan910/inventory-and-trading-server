@@ -4,6 +4,11 @@ from sqlalchemy.sql import func
 import enum
 from app.db.base_class import Base
 
+class TransactionStatus(str, enum.Enum):
+    COMPLETED = "COMPLETED"
+    PENDING = "PENDING"
+    CANCELLED = "CANCELLED"
+
 class TransactionType(str, enum.Enum):
     RETAIL = "RETAIL"
     TRADE = "TRADE"
@@ -14,6 +19,10 @@ class Transaction(Base):
     transaction_type = Column(String, nullable=False)
     customer_name = Column(String, nullable=True)
     total_amount = Column(Float, default=0.0)
+
+    status = Column(String, default=TransactionStatus.COMPLETED, index=True)
+    amount_paid = Column(Float, default=0.0)
+    balance_due = Column(Float, default=0.0)
     
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     created_by_id = Column(Integer, ForeignKey("user.id"))

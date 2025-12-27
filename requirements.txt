@@ -8,3 +8,5 @@ sqlalchemy
 alembic
 pydantic-settings
 pandas
+scikit-learn
+joblib

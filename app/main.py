@@ -1,7 +1,7 @@
 # app/main.py
 from fastapi import FastAPI
 from app.core.config import settings
-from app.api.routes import auth, products, transactions, users, inventory
+from app.api.routes import auth, market, products, transactions, users, inventory
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title=settings.PROJECT_NAME)
@@ -26,6 +26,7 @@ app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["u
 app.include_router(inventory.router, prefix=f"{settings.API_V1_STR}/inventory", tags=["inventory"])
 app.include_router(products.router, prefix=f"{settings.API_V1_STR}/products", tags=["products"])
 app.include_router(transactions.router, prefix=f"{settings.API_V1_STR}/transactions", tags=["transactions"])
+app.include_router(market.router, prefix=f"{settings.API_V1_STR}/market", tags=["market"])
 
 @app.get("/")
 def root():
