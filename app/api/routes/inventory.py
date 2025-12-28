@@ -1,10 +1,12 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db, get_current_active_user
 from app.models.inventory import Material
-from app.schemas.inventory import MaterialCreate, MaterialResponse, MaterialUpdate
+from app.models.user import User
+from app.schemas.inventory import AuditSubmission, MaterialCreate, MaterialResponse, MaterialUpdate
 
 router = APIRouter()
 
@@ -50,3 +52,24 @@ def update_material(
     db.commit()
     db.refresh(material)
     return material
+
+@router.post("/audit")
+def submit_stocktake_audit(
+    audit: AuditSubmission,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    updated_count = 0
+    
+    for item in audit.items:
+        material = db.query(Material).filter(Material.id == item.material_id).first()
+        if not material:
+            continue
+            
+        if material.current_stock != item.counted_quantity:
+            material.current_stock = item.counted_quantity
+            material.last_updated = func.now()
+            updated_count += 1
+            
+    db.commit()
+    return {"status": "success", "updated_items": updated_count}

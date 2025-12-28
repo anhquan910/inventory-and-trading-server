@@ -6,7 +6,7 @@ from app.api.deps import get_db, get_current_active_user
 from app.models.product import Product
 from app.models.user import User
 from app.schemas.product import ProductCreate, ProductResponse, ProductUpdate
-from app.models.production import ProductMaterial
+from app.models.production import ProductMaterial, ProductionLog
 from app.models.inventory import Material
 from app.schemas.production import ComponentCreate, ComponentResponse, ProductionRun
 
@@ -158,11 +158,22 @@ def record_production_run(
                 detail=f"Insufficient stock for {item.material.name}. Required: {required_qty}, Available: {item.material.current_stock}"
             )
 
+    total_cost_of_run = 0.0
     for item in recipe_items:
         total_deduction = item.quantity_used * production.quantity
         item.material.current_stock -= total_deduction
+        total_cost_of_run += (total_deduction * item.material.cost_per_unit)
 
     product.stock_quantity += production.quantity
+
+    log_entry = ProductionLog(
+        product_id=product.id,
+        quantity_produced=production.quantity,
+        unit_cost_snapshot=total_cost_of_run / production.quantity,
+        total_cost=total_cost_of_run,
+        created_by_id=current_user.id
+    )
+    db.add(log_entry)
 
     db.commit()
     

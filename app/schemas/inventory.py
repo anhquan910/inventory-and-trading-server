@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
 # Shared properties
 class MaterialBase(BaseModel):
@@ -33,3 +33,11 @@ class MaterialResponse(MaterialBase):
 
     class Config:
         from_attributes = True
+
+class AuditItem(BaseModel):
+    material_id: int
+    counted_quantity: float
+    reason: Optional[str] = "Stocktake Adjustment"
+
+class AuditSubmission(BaseModel):
+    items: List[AuditItem]
