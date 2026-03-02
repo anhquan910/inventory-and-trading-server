@@ -15,7 +15,7 @@ def main():
         
         seed_inventory(db)
       
-        csv_path = os.path.join(os.path.dirname(__file__), "Final_Dataset.csv")
+        csv_path = os.path.join(os.path.dirname(__file__), "gold_price_forecasting_dataset.csv")
         seed_market_data(db, csv_path)
 
         print("--- SEED PROCESS COMPLETED ---")

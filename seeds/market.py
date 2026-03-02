@@ -1,39 +1,61 @@
 import pandas as pd
 import os
 from sqlalchemy.orm import Session
+from sqlalchemy import text # Import text to execute raw SQL commands
 from app.models.market_data import MarketData
 
 def seed_market_data(db: Session, csv_path: str):
     print(f"Checking Market Data from {csv_path}...")
-
-    if db.query(MarketData).first():
-        print("⚠️ Market Data already exists. Skipping.")
-        return
 
     if not os.path.exists(csv_path):
         print(f"❌ CSV not found at: {csv_path}")
         return
 
     try:
+
+        print("🧹 Truncating existing Market Data...")
+
+        db.execute(text("TRUNCATE TABLE marketdata RESTART IDENTITY CASCADE;"))
+        db.commit() 
+        print("✅ Table truncated successfully.")
+
+
         df = pd.read_csv(csv_path)
-        
+
         rename_map = {
-            'Date': 'date', 'Open': 'gold_open', 'High': 'gold_high',
-            'Low': 'gold_low', 'Close': 'gold_close', 'Adj Close': 'gold_adj_close',
-            'Volume': 'gold_volume', 'SP_Ajclose': 'sp_adj_close',
-            'DJ_Ajclose': 'dj_adj_close', 'EG_Ajclose': 'eg_adj_close',
-            'GDX_Adj Close': 'gdx_adj_close', 'USO_Adj Close': 'uso_adj_close',
-            'RHO_PRICE': 'rho_price'
+            'date': 'date', 
+            'open': 'gold_open', 
+            'high': 'gold_high',
+            'low': 'gold_low', 
+            'close': 'gold_close', 
+            'adj close': 'gold_adj_close',
+            'volume': 'gold_volume', 
+            'ma_7': 'ma_7', 
+            'ma_30': 'ma_30', 
+            'ma_90': 'ma_90', 
+            'daily_return': 'daily_return', 
+            'volatility_7': 'volatility_7', 
+            'volatility_30': 'volatility_30', 
+            'rsi': 'rsi', 
+            'macd': 'macd', 
+            'macd_signal': 'macd_signal', 
+            'bb_upper': 'bb_upper', 
+            'bb_lower': 'bb_lower'
         }
+
         df = df.rename(columns=rename_map)
-        df.columns = [c.lower() for c in df.columns]
+        
         df['date'] = pd.to_datetime(df['date']).dt.date
+        
         df = df.where(pd.notnull(df), None)
+
+        valid_columns = list(rename_map.values())
+        df = df[[col for col in valid_columns if col in df.columns]]
 
         data_dicts = df.to_dict(orient='records')
         objects = [MarketData(**row) for row in data_dicts]
 
-        print(f"🌱 Inserting {len(objects)} market rows...")
+        print(f"🌱 Inserting {len(objects)} fresh market rows...")
         db.bulk_save_objects(objects)
         db.commit()
         print("✅ Market Data seeded successfully!")

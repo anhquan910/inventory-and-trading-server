@@ -26,11 +26,12 @@ def train_and_predict(db: Session, days_to_predict: int = 7):
     query = db.query(
         MarketData.date, 
         MarketData.gold_close, 
-        MarketData.sp_close,   
-        MarketData.usdi_price, 
-        MarketData.uso_close,  
-        MarketData.eu_price,   
-        MarketData.plt_price   
+        MarketData.ma_7,       
+        MarketData.ma_30,      
+        MarketData.rsi,        
+        MarketData.macd,       
+        MarketData.bb_upper,   
+        MarketData.bb_lower    
     ).order_by(MarketData.date.asc())
     
     df = pd.read_sql(query.statement, db.bind)
@@ -43,7 +44,10 @@ def train_and_predict(db: Session, days_to_predict: int = 7):
     df.sort_index(inplace=True)
     
     target_col = 'gold_close'
-    feature_cols = ['gold_close', 'sp_close', 'usdi_price', 'uso_close', 'eu_price', 'plt_price']
+    feature_cols = [
+        'gold_close', 'ma_7', 'ma_30', 
+        'rsi', 'macd', 'bb_upper', 'bb_lower'
+    ]
     generated_features = []
 
     for col in feature_cols:
@@ -80,6 +84,6 @@ def train_and_predict(db: Session, days_to_predict: int = 7):
             "is_forecast": True
         })
         
-        current_feats['gold_close_lag1'] = pred_price 
+        current_feats['gold_close_lag1'] = pred_price
 
     return future_predictions, score

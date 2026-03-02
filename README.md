@@ -25,9 +25,22 @@ pip install -r requirements.txt
 # Run Migrations (Create DB Tables)
 alembic upgrade head
 
-# Seed gold price data into database: https://www.kaggle.com/datasets/sid321axn/gold-price-prediction-dataset
-python .\dataset\seed_data.py
+# Seed gold price data into database: https://www.kaggle.com/datasets/vishardmehta/gold-price-forecasting-dataset/data
+python .\seed.py
 
 # Start the Server
 uvicorn app.main:app --reload
 ```
+
+### UPDATE
+
+Dataset have been updated, please run
+
+```bash
+alembic upgrade head
+
+# Seed gold price data into database: https://www.kaggle.com/datasets/vishardmehta/gold-price-forecasting-dataset/data
+python .\seed.py
+```
+
+again if you already run it once to keep the seed data up-to-date.
