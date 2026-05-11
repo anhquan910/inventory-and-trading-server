@@ -8,6 +8,7 @@ from app.models.inventory import Material
 from app.models.user import User
 from app.schemas.transaction import TransactionCreate, TransactionResponse
 
+# Transaction management endpoints for sales and trade workflows.
 router = APIRouter()
 
 @router.post("/", response_model=dict)
@@ -16,6 +17,7 @@ def create_transaction(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
+    # Create a new transaction and adjust inventory or material stock based on type.
     total = sum(item.quantity * item.unit_price for item in txn_in.items)
     balance = total - txn_in.amount_paid
 
@@ -71,6 +73,7 @@ def get_transaction_history(
     limit: int = 100,
     db: Session = Depends(get_db)
 ):
+    # Return transaction history, optionally filtered by status.
     query = db.query(Transaction)
     if status:
         query = query.filter(Transaction.status == status)
@@ -79,6 +82,7 @@ def get_transaction_history(
 
 @router.patch("/{transaction_id}/pay")
 def mark_transaction_paid(transaction_id: int, db: Session = Depends(get_db)):
+    # Mark an outstanding transaction as fully paid.
     txn = db.query(Transaction).filter(Transaction.id == transaction_id).first()
     if not txn:
         raise HTTPException(404, "Transaction not found")

@@ -11,6 +11,7 @@ from app.models.user import User
 from app.schemas.token import Token
 from app.schemas.user import  UserCreate, User as UserResponse
 
+# Authentication routes for user signup and token issuance.
 router = APIRouter()
 
 @router.post("/signup", response_model=UserResponse)
@@ -18,6 +19,7 @@ def create_user(
     user_in: UserCreate,
     db: Session = Depends(get_db)
 ):
+    # Register a new user after verifying the email is not already taken.
     user = db.query(User).filter(User.email == user_in.email).first()
     if user:
         raise HTTPException(
@@ -43,7 +45,7 @@ async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Session = Depends(get_db)
 ):
-    # Check DB
+    # Authenticate the user and issue a JWT access token.
     user = db.query(User).filter(User.email == form_data.username).first()
     
     if not user or not verify_password(form_data.password, user.hashed_password):

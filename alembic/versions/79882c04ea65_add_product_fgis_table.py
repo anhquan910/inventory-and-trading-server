@@ -5,6 +5,7 @@ Revises: 4a50f4668530
 Create Date: 2025-12-24 18:34:43.431516
 
 """
+# Migration to create the productfgis table for finished goods inventory system.
 from typing import Sequence, Union
 
 from alembic import op

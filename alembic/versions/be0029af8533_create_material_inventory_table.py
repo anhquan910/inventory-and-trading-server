@@ -5,6 +5,7 @@ Revises: 4498a3847c90
 Create Date: 2025-12-19 21:57:07.181832
 
 """
+# Migration to create the material table for managing inventory of raw materials.
 from typing import Sequence, Union
 
 from alembic import op

@@ -5,6 +5,7 @@ Revises: a755d277343a
 Create Date: 2025-12-24 19:31:54.090963
 
 """
+# Migration to create the productmaterial table for product recipes (bill of materials).
 from typing import Sequence, Union
 
 from alembic import op

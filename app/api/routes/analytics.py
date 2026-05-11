@@ -8,6 +8,7 @@ from app.api.deps import get_db
 from app.models.transaction import Transaction
 from app.models.production import ProductionLog
 
+# Analytics endpoints for financial reporting dashboards.
 router = APIRouter()
 
 @router.get("/financials")
@@ -15,6 +16,7 @@ def get_financial_summary(
     period: str = "30d",
     db: Session = Depends(get_db)
 ):
+    # Calculate revenue, cost, and profit summaries for the selected period.
     now = datetime.now()
     if period == "7d":
         start_date = now - timedelta(days=7)

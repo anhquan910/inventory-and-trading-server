@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.db.base_class import Base
 
+# Represents a product item in inventory with pricing and stock details.
 class Product(Base):
     id = Column(Integer, primary_key=True, index=True)
     

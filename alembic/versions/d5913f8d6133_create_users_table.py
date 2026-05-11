@@ -5,6 +5,7 @@ Revises:
 Create Date: 2025-12-18 08:50:31.834727
 
 """
+# Migration to create the users table for user authentication and profiles.
 from typing import Sequence, Union
 
 from alembic import op

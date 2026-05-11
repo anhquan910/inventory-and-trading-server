@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
 
+# Shared fields for product request and response payloads.
 class ProductBase(BaseModel):
     sku: str
     name: str
@@ -13,6 +14,7 @@ class ProductBase(BaseModel):
     image_url: Optional[str] = None
 
 class ProductCreate(ProductBase):
+    # Schema used when creating a new product.
     pass
 
 class ProductUpdate(BaseModel):
@@ -25,6 +27,7 @@ class ProductUpdate(BaseModel):
     image_url: Optional[str] = None
 
 class ProductResponse(ProductBase):
+    # Schema returned in API responses for product details.
     id: int
     created_at: datetime
 

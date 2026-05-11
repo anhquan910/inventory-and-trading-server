@@ -5,6 +5,7 @@ Revises: be0029af8533
 Create Date: 2025-12-21 19:28:56.927823
 
 """
+# Migration to add SKU, description, and preferred vendor columns to the material table.
 from typing import Sequence, Union
 
 from alembic import op

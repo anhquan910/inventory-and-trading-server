@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, Float, Date, BigInteger
 from app.db.base_class import Base
 
+# Historical market data used for forecasting and analytics.
 class MarketData(Base):
     id = Column(Integer, primary_key=True, index=True)
     date = Column(Date, unique=True, index=True, nullable=False)

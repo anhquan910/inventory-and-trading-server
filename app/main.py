@@ -1,4 +1,5 @@
 # app/main.py
+# Application entrypoint for the FastAPI service.
 from fastapi import FastAPI
 from app.core.config import settings
 from app.api.routes import analytics, auth, market, production, products, transactions, users, inventory
@@ -6,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title=settings.PROJECT_NAME)
 
+# Allowed CORS origins for browser clients during development.
 origins = [
     "http://localhost:5173",
     "http://localhost",
@@ -20,7 +22,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include Routers
+# Register API routers for the different application modules.
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
 app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["users"])
 app.include_router(inventory.router, prefix=f"{settings.API_V1_STR}/inventory", tags=["inventory"])
@@ -32,4 +34,5 @@ app.include_router(analytics.router, prefix=f"{settings.API_V1_STR}/analytics", 
 
 @app.get("/")
 def root():
+    # Basic health-check and welcome endpoint.
     return {"message": "Welcome to the Jewellery Inventory API"}

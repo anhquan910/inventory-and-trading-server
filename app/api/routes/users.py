@@ -10,4 +10,5 @@ router = APIRouter()
 async def read_users_me(
     current_user: Annotated[UserModel, Depends(get_current_active_user)],
 ):
+    # Return the currently authenticated user's public profile.
     return current_user

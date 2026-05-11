@@ -4,6 +4,7 @@ from sqlalchemy.sql import func
 import enum
 from app.db.base_class import Base
 
+# Enumerations for transaction state and types.
 class TransactionStatus(str, enum.Enum):
     COMPLETED = "COMPLETED"
     PENDING = "PENDING"

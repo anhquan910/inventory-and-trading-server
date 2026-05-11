@@ -10,6 +10,7 @@ from app.models.production import ProductMaterial, ProductionLog
 from app.models.inventory import Material
 from app.schemas.production import ComponentCreate, ComponentResponse, ProductionRun
 
+# Product and production management endpoints.
 router = APIRouter()
 
 @router.get("/", response_model=List[ProductResponse])
@@ -19,6 +20,7 @@ def read_products(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
+    # Retrieve a paged list of products.
     products = db.query(Product).offset(skip).limit(limit).all()
     return products
 
@@ -28,6 +30,7 @@ def create_product(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
+    # Create a new product and associate it with the authenticated user.
     if db.query(Product).filter(Product.sku == product_in.sku).first():
         raise HTTPException(status_code=400, detail="Product with this SKU already exists.")
 

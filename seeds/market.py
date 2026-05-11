@@ -5,6 +5,7 @@ from sqlalchemy import text # Import text to execute raw SQL commands
 from app.models.market_data import MarketData
 
 def seed_market_data(db: Session, csv_path: str):
+    # Load and seed historical market data from a CSV file.
     print(f"Checking Market Data from {csv_path}...")
 
     if not os.path.exists(csv_path):

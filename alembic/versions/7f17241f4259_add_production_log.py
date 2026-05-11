@@ -5,6 +5,7 @@ Revises: b30026230124
 Create Date: 2025-12-28 12:42:12.413133
 
 """
+# Migration to create the productionlog table for tracking manufacturing jobs.
 from typing import Sequence, Union
 
 from alembic import op

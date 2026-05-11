@@ -5,6 +5,7 @@ Revises: d5913f8d6133
 Create Date: 2025-12-19 21:30:58.737076
 
 """
+# Migration to create the marketdata table for storing historical financial market data.
 from typing import Sequence, Union
 
 from alembic import op

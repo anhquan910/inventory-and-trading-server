@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from app.models.inventory import Material
 
 def seed_inventory(db: Session):
+    # Define sample material data for initial inventory seeding.
     materials = [
         {
             "name": "18k Yellow Gold Grain",

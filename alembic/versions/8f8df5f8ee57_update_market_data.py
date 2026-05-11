@@ -5,6 +5,7 @@ Revises: 7f17241f4259
 Create Date: 2026-03-02 19:59:51.719248
 
 """
+# Migration to update the marketdata table with additional technical indicators.
 from typing import Sequence, Union
 
 from alembic import op

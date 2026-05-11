@@ -8,6 +8,7 @@ from app.models.inventory import Material
 from app.models.user import User
 from app.schemas.inventory import AuditSubmission, MaterialCreate, MaterialResponse, MaterialUpdate
 
+# Inventory management endpoints for material stock and audits.
 router = APIRouter()
 
 @router.get("/", response_model=List[MaterialResponse])
@@ -17,6 +18,7 @@ def read_materials(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_active_user)
 ):
+    # Retrieve a paged list of materials in inventory.
     materials = db.query(Material).offset(skip).limit(limit).all()
     return materials
 
@@ -59,6 +61,7 @@ def submit_stocktake_audit(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
+    # Apply stocktake audit adjustments for inventory materials.
     updated_count = 0
     
     for item in audit.items:

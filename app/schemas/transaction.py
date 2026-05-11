@@ -2,6 +2,7 @@ from datetime import datetime
 from pydantic import BaseModel
 from typing import List, Optional, Literal
 
+# Request payload for a transaction line item.
 class TransactionItemCreate(BaseModel):
     product_id: Optional[int] = None
     material_id: Optional[int] = None

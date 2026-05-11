@@ -5,6 +5,7 @@ Revises: 626e4f230e21
 Create Date: 2025-12-24 19:36:45.014227
 
 """
+# Migration to add additional changes to the product recipe table (empty migration).
 from typing import Sequence, Union
 
 from alembic import op

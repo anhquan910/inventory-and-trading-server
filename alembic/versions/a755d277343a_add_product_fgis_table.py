@@ -5,6 +5,7 @@ Revises: 79882c04ea65
 Create Date: 2025-12-24 19:02:33.945979
 
 """
+# Migration to add additional changes to the product FGIS table.
 from typing import Sequence, Union
 
 from alembic import op

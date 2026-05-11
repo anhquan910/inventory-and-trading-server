@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 
+# User-related payloads for authentication and profile data.
 class UserBase(BaseModel):
     email: EmailStr | None = None
     is_active: bool | None = True

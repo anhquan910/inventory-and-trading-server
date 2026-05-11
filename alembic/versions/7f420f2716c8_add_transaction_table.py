@@ -5,6 +5,7 @@ Revises: 2fa8ee4ab361
 Create Date: 2025-12-24 21:43:16.765736
 
 """
+# Migration to create the transaction and transactionitem tables for recording sales and purchases.
 from typing import Sequence, Union
 
 from alembic import op

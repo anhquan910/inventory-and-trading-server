@@ -5,6 +5,7 @@ Revises: 7f420f2716c8
 Create Date: 2025-12-27 19:52:24.020108
 
 """
+# Migration to add status and debt tracking columns to the transaction table.
 from typing import Sequence, Union
 
 from alembic import op

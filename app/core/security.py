@@ -1,4 +1,5 @@
 # app/core/security.py
+# Authentication helpers for password hashing and JWT token creation.
 from datetime import datetime, timedelta, timezone
 import jwt
 from pwdlib import PasswordHash
@@ -7,12 +8,15 @@ from app.core.config import settings
 password_hash = PasswordHash.recommended()
 
 def verify_password(plain_password, hashed_password):
+    # Compare a raw password against a stored hashed password.
     return password_hash.verify(plain_password, hashed_password)
 
 def get_password_hash(password):
+    # Hash a password before saving it to the database.
     return password_hash.hash(password)
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
+    # Generate a JWT access token with an expiration time.
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta

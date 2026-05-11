@@ -7,10 +7,12 @@ from app.api.deps import get_db
 from app.models.market_data import MarketData 
 from app.services.prediction import train_and_predict
 
+# Market data and forecasting endpoints.
 router = APIRouter()
 
 @router.get("/trend")
 def get_market_trend(db: Session = Depends(get_db)):
+    # Fetch recent market history and append forecasted values.
     history = db.query(MarketData)\
         .order_by(MarketData.date.desc())\
         .limit(90)\

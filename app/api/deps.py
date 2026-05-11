@@ -8,9 +8,11 @@ from app.core.config import settings
 from app.db.session import SessionLocal
 from app.models.user import User
 
+# OAuth2 token dependency for route authorization.
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/token")
 
 def get_db() -> Generator:
+    # Provide a database session for request handlers.
     try:
         db = SessionLocal()
         yield db
@@ -21,6 +23,7 @@ SessionDep = Annotated[Session, Depends(get_db)]
 TokenDep = Annotated[str, Depends(oauth2_scheme)]
 
 async def get_current_user(db: SessionDep, token: TokenDep) -> User:
+    # Decode and validate the JWT token, then load the associated user.
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -33,7 +36,7 @@ async def get_current_user(db: SessionDep, token: TokenDep) -> User:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-    
+
     user = db.query(User).filter(User.email == email).first()
     if user is None:
         raise credentials_exception
@@ -42,6 +45,7 @@ async def get_current_user(db: SessionDep, token: TokenDep) -> User:
 async def get_current_active_user(
     current_user: Annotated[User, Depends(get_current_user)],
 ) -> User:
+    # Ensure the current user is active before allowing access.
     if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user

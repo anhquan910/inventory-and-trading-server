@@ -11,7 +11,11 @@ from app.models.market_data import MarketData
 MODEL_PATH = "gold_price_model.joblib"
 MAX_MODEL_AGE_SECONDS = 24 * 60 * 60 
 
+# Forecasting service for gold market prices.
+# Uses a cached model when available and retrains if the saved model is stale.
+
 def get_or_train_model(X, y):
+    # Load an existing model from disk if it is fresh; otherwise train a new one.
     if os.path.exists(MODEL_PATH):
         file_age = time.time() - os.path.getmtime(MODEL_PATH)
         if file_age < MAX_MODEL_AGE_SECONDS:
@@ -23,6 +27,7 @@ def get_or_train_model(X, y):
     return model
 
 def train_and_predict(db: Session, days_to_predict: int = 7):
+    # Query historical market data used to train and evaluate the forecasting model.
     query = db.query(
         MarketData.date, 
         MarketData.gold_close, 
@@ -37,6 +42,7 @@ def train_and_predict(db: Session, days_to_predict: int = 7):
     df = pd.read_sql(query.statement, db.bind)
     
     if df.empty or len(df) < 30:
+        # Not enough historical data to produce a reliable forecast.
         return [], 0.0
 
     df['date'] = pd.to_datetime(df['date'])
@@ -50,6 +56,7 @@ def train_and_predict(db: Session, days_to_predict: int = 7):
     ]
     generated_features = []
 
+    # Create lag and rolling window features for the model.
     for col in feature_cols:
         df[f'{col}_lag1'] = df[col].shift(1)
         generated_features.append(f'{col}_lag1')
@@ -63,6 +70,7 @@ def train_and_predict(db: Session, days_to_predict: int = 7):
     X = df[generated_features]
     y = df[target_col]
 
+    # Train or load the model and measure its fit on the available data.
     model = get_or_train_model(X, y) 
     score = model.score(X, y)
 
@@ -71,6 +79,7 @@ def train_and_predict(db: Session, days_to_predict: int = 7):
     current_feats = df.iloc[-1][generated_features].copy()
     last_date = df.index[-1]
 
+    # Generate consecutive future predictions one day at a time.
     for i in range(1, days_to_predict + 1):
         input_df = pd.DataFrame([current_feats.values], columns=generated_features)
         
